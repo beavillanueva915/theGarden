@@ -1,0 +1,19 @@
+{
+  "expo": {
+    "name": "The Garden",
+    "slug": "the-garden",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.bea.thegarden"
+    },
+    "android": {
+      "package": "com.bea.thegarden",
+      "adaptiveIcon": {
+        "backgroundColor": "#1C1712"
+      }
+    }
+  }
+}
