@@ -27,7 +27,6 @@ function ActionButton({ choice, index, onPress, colors }: {
   colors: AppColors;
 }) {
   const [opacity, setOpacity] = useState(0);
-  const isPrimary = choice.weight !== 'secondary';
 
   useEffect(() => {
     const t = setTimeout(() => setOpacity(1), index * 150);
@@ -45,9 +44,9 @@ function ActionButton({ choice, index, onPress, colors }: {
         padding: '14px 20px',
         marginBottom: 10,
         background: 'transparent',
-        border: `1px solid ${isPrimary ? colors.accent : colors.choiceBorder}`,
+        border: `1px solid ${colors.choiceBorder}`,
         borderRadius: 4,
-        color: isPrimary ? colors.accent : colors.textSecondary,
+        color: colors.textSecondary,
         fontFamily: 'Georgia, serif',
         fontSize: 16,
         textAlign: 'left',
