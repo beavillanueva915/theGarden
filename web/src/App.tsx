@@ -120,13 +120,15 @@ function GameScreen() {
         colors={colors}
       />
 
-      <ActionPanel
-        choices={currentNode?.choices ?? []}
-        flags={state.flags}
-        isTyping={state.isTyping}
-        onChoiceSelected={handleChoiceSelected}
-        colors={colors}
-      />
+      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0 }}>
+        <ActionPanel
+          choices={currentNode?.choices ?? []}
+          flags={state.flags}
+          isTyping={state.isTyping}
+          onChoiceSelected={handleChoiceSelected}
+          colors={colors}
+        />
+      </div>
 
       {showMenuButton && !showPanel && (
         <button

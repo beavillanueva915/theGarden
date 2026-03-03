@@ -70,7 +70,7 @@ export default function TextWindow({ historicalLines, currentLines, onComplete, 
   };
 
   return (
-    <div ref={scrollRef} style={{ flex: 1, overflowY: 'auto', padding: '60px 24px 16px' }}>
+    <div ref={scrollRef} style={{ flex: 1, overflowY: 'auto', padding: '60px 24px 300px' }}>
       {historicalLines.map((line, i) =>
         line === '' ? (
           <div key={`h-gap-${i}`} style={{ height: 14 }} />
