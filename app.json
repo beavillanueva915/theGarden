@@ -14,6 +14,24 @@
       "adaptiveIcon": {
         "backgroundColor": "#1C1712"
       }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "97dcefb5-e72c-499a-be43-4e44c6eb0e4f"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/97dcefb5-e72c-499a-be43-4e44c6eb0e4f"
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static"
+    },
+    "experiments": {
+      "baseUrl": "/beaGames"
     }
   }
 }
