@@ -1,16 +1,16 @@
 # The Garden
 
-A short text-based mobile game for iPhone, inspired by A Dark Room. Warm, quiet, and wholesome — with a message worth remembering.
+A short text-based game for web and iPhone via Expo. You wake in a small garden.
 
-You wake in a small garden. You explore. You find things that matter. You remember someone you love.
-
-Completable in about 5 minutes.
+Completable in about 8 minutes.
 
 ---
 
 ## Play It
 
-Install **Expo Go** (free on the App Store), then open the share link:
+**Web** — live at [beavillanueva915.github.io/theGarden](https://beavillanueva915.github.io/theGarden/)
+
+**iPhone** — install [Expo Go](https://expo.dev/go) (free on the App Store), then open the share link:
 
 > _Link coming soon — will be added after first Expo publish_
 
@@ -18,8 +18,9 @@ Install **Expo Go** (free on the App Store), then open the share link:
 
 ## Tech Stack
 
-- [Expo](https://expo.dev) (React Native + TypeScript)
-- Distributed via Expo Go — no App Store or Apple Developer account required
+- [Vite](https://vitejs.dev) + React + TypeScript (web)
+- [Expo](https://expo.dev) + React Native + TypeScript (iPhone)
+- Shared game logic in `src/` — no framework dependencies
 
 ---
 
@@ -27,26 +28,27 @@ Install **Expo Go** (free on the App Store), then open the share link:
 
 ### Prerequisites
 - [Node.js](https://nodejs.org) (LTS)
-- An [Expo account](https://expo.dev) (free)
 
 ### Install
 
 ```bash
-git clone https://github.com/beavillanueva915/beaGames.git
-cd beaGames
+git clone https://github.com/beavillanueva915/theGarden.git
+cd theGarden
+```
+
+### Run (web)
+
+```bash
+cd web
 npm install
+npm run dev
 ```
 
-### Run (local network)
+### Run (iPhone)
 
 ```bash
+npm install
 npm start
-```
-
-### Run (Microsoft Dev Box or remote machine)
-
-```bash
-npm run tunnel
 ```
 
 Expo will print a QR code. Open it in Expo Go on your iPhone.
@@ -57,32 +59,33 @@ Expo will print a QR code. Open it in Expo Go on your iPhone.
 
 ```
 src/
-├── theme.ts                  # Colors, fonts, animation constants
-├── game/
-│   ├── gameState.ts          # TypeScript types and initial state
-│   ├── story.ts              # All narrative content and choices
-│   └── engine.ts             # Pure state transition functions
-└── components/
-    ├── GameScreen.tsx         # Main game loop (useReducer)
-    ├── TextWindow.tsx         # Typewriter animation + scrolling text log
-    ├── ActionButton.tsx       # Choice buttons with fade-in + haptics
-    └── ActionPanel.tsx        # Manages button visibility and stagger
+├── theme.ts                  # Colors, fonts, speed constants
+└── game/
+    ├── gameState.ts          # TypeScript types and initial state
+    ├── story.ts              # All narrative content and choices
+    └── engine.ts             # Pure state transition functions
+
+web/
+└── src/
+    ├── App.tsx               # Main game loop (useReducer)
+    └── components/
+        ├── TextWindow.tsx    # Typewriter animation + scrolling text log
+        ├── ActionPanel.tsx   # Choice buttons with fade-in
+        └── MapPanel.tsx      # Map overlay, theme + speed settings
 ```
 
 ---
 
-## Contributing / Making Changes
+## Contributing
 
 ```bash
-git checkout develop
+git checkout main && git pull origin main
 git checkout -b feature/your-change
 # make changes
 git add .
 git commit -m "describe your change"
 git push -u origin feature/your-change
-# open a PR targeting develop on GitHub
+# open a PR targeting main on GitHub
 ```
 
-PRs should target `develop`. `develop` → `main` only when a milestone is stable and tested on device.
-
-See `.github/PULL_REQUEST_TEMPLATE.md` for the PR checklist.
+PRs target `main`. Keep changes focused — one concern per PR.
