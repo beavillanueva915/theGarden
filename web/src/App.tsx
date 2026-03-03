@@ -9,7 +9,7 @@ import {
   returnFromMap,
   resetGame,
 } from '@game/engine';
-import { ThemeProvider, useTheme } from '@theme';
+import { ThemeProvider, useTheme, SPEEDS } from '@theme';
 import TextWindow from './components/TextWindow';
 import ActionPanel from './components/ActionPanel';
 import MapPanel from './components/MapPanel';
@@ -48,7 +48,8 @@ function GameScreen() {
   const [showReplay, setShowReplay] = useState(false);
   const [replayVisible, setReplayVisible] = useState(false);
   const [showPanel, setShowPanel] = useState(false);
-  const { colors, themeKey, setThemeKey } = useTheme();
+  const { colors, themeKey, setThemeKey, speedKey, setSpeedKey } = useTheme();
+  const { charDelay, pauseDelay } = SPEEDS[speedKey];
 
   const currentNode = STORY_NODES[state.currentNodeId];
 
@@ -118,6 +119,8 @@ function GameScreen() {
         currentLines={currentNode?.lines ?? []}
         onComplete={handleTypingComplete}
         colors={colors}
+        charDelay={charDelay}
+        pauseDelay={pauseDelay}
       />
 
       <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0 }}>
@@ -135,7 +138,7 @@ function GameScreen() {
           onClick={() => setShowPanel(true)}
           style={{
             position: 'absolute',
-            top: 50,
+            top: 16,
             right: 24,
             background: 'none',
             border: 'none',
@@ -161,6 +164,8 @@ function GameScreen() {
           colors={colors}
           themeKey={themeKey}
           setThemeKey={setThemeKey}
+          speedKey={speedKey}
+          setSpeedKey={setSpeedKey}
         />
       )}
 

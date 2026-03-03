@@ -1,6 +1,6 @@
 import React from 'react';
 import { GameFlags, Phase, FlagKey } from '@game/gameState';
-import { AppColors, ThemeKey } from '@theme';
+import { AppColors, ThemeKey, SpeedKey } from '@theme';
 
 interface Props {
   flags: GameFlags;
@@ -10,6 +10,8 @@ interface Props {
   colors: AppColors;
   themeKey: ThemeKey;
   setThemeKey: (k: ThemeKey) => void;
+  speedKey: SpeedKey;
+  setSpeedKey: (k: SpeedKey) => void;
 }
 
 const THEMES: { key: ThemeKey; label: string }[] = [
@@ -18,9 +20,15 @@ const THEMES: { key: ThemeKey; label: string }[] = [
   { key: 'soft-slate', label: 'soft slate' },
 ];
 
+const SPEED_OPTIONS: { key: SpeedKey; label: string }[] = [
+  { key: 'slow',   label: 'slow' },
+  { key: 'normal', label: 'normal' },
+  { key: 'fast',   label: 'fast' },
+];
+
 const TAPPABLE: Phase[] = ['memory', 'realization', 'return'];
 
-export default function MapPanel({ flags, phase, onNavigate, onClose, colors, themeKey, setThemeKey }: Props) {
+export default function MapPanel({ flags, phase, onNavigate, onClose, colors, themeKey, setThemeKey, speedKey, setSpeedKey }: Props) {
   const tappable = TAPPABLE.includes(phase);
 
   const locations: { id: string; label: string; nodeId: string; flag: FlagKey | null }[] = [
@@ -146,6 +154,35 @@ export default function MapPanel({ flags, phase, onNavigate, onClose, colors, th
                 border: `1px solid ${themeKey === key ? colors.accent : colors.choiceBorder}`,
                 borderRadius: 4,
                 color: themeKey === key ? colors.accent : colors.textSecondary,
+                fontFamily: 'Georgia, serif',
+                fontSize: 12,
+                cursor: 'pointer',
+              }}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+
+        {/* Divider */}
+        <div style={{ height: 1, background: colors.choiceBorder, margin: '16px 0' }} />
+
+        {/* Speed */}
+        <p style={{ fontFamily: 'Georgia, serif', fontSize: 11, color: colors.textSecondary, letterSpacing: 1, marginBottom: 10 }}>
+          speed
+        </p>
+        <div style={{ display: 'flex', gap: 8 }}>
+          {SPEED_OPTIONS.map(({ key, label }) => (
+            <button
+              key={key}
+              onClick={() => setSpeedKey(key)}
+              style={{
+                flex: 1,
+                padding: '8px 4px',
+                background: 'transparent',
+                border: `1px solid ${speedKey === key ? colors.accent : colors.choiceBorder}`,
+                borderRadius: 4,
+                color: speedKey === key ? colors.accent : colors.textSecondary,
                 fontFamily: 'Georgia, serif',
                 fontSize: 12,
                 cursor: 'pointer',

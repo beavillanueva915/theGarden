@@ -6,9 +6,11 @@ interface Props {
   currentLines: string[];
   onComplete: () => void;
   colors: AppColors;
+  charDelay: number;
+  pauseDelay: number;
 }
 
-function useTypewriter(lines: string[], onComplete: () => void): string[] {
+function useTypewriter(lines: string[], onComplete: () => void, charDelay: number, pauseDelay: number): string[] {
   const [lineIndex, setLineIndex] = useState(0);
   const [charCount, setCharCount] = useState(0);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -36,11 +38,11 @@ function useTypewriter(lines: string[], onComplete: () => void): string[] {
 
     const line = lines[lineIndex];
     if (line === '') {
-      timerRef.current = setTimeout(() => { setLineIndex(l => l + 1); setCharCount(0); }, 420);
+      timerRef.current = setTimeout(() => { setLineIndex(l => l + 1); setCharCount(0); }, pauseDelay);
     } else if (charCount < line.length) {
-      timerRef.current = setTimeout(() => { setCharCount(c => c + 1); }, 35);
+      timerRef.current = setTimeout(() => { setCharCount(c => c + 1); }, charDelay);
     } else {
-      timerRef.current = setTimeout(() => { setLineIndex(l => l + 1); setCharCount(0); }, 420);
+      timerRef.current = setTimeout(() => { setLineIndex(l => l + 1); setCharCount(0); }, pauseDelay);
     }
     return () => { if (timerRef.current) clearTimeout(timerRef.current); };
   }, [lineIndex, charCount, lines]);
@@ -53,9 +55,9 @@ function useTypewriter(lines: string[], onComplete: () => void): string[] {
   return revealed;
 }
 
-export default function TextWindow({ historicalLines, currentLines, onComplete, colors }: Props) {
+export default function TextWindow({ historicalLines, currentLines, onComplete, colors, charDelay, pauseDelay }: Props) {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const revealed = useTypewriter(currentLines, onComplete);
+  const revealed = useTypewriter(currentLines, onComplete, charDelay, pauseDelay);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight });
