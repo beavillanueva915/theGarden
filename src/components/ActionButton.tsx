@@ -1,6 +1,8 @@
 import React, { useEffect, useRef } from 'react';
-import { Animated, Pressable, Text, StyleSheet } from 'react-native';
+import { Animated, Platform, Pressable, Text, StyleSheet } from 'react-native';
 import * as Haptics from 'expo-haptics';
+
+const nativeDriver = Platform.OS !== 'web';
 import { Choice } from '../game/gameState';
 import { THEME, useTheme } from '../theme';
 
@@ -21,17 +23,17 @@ export default function ActionButton({ choice, index, onPress }: ActionButtonPro
       Animated.timing(opacity, {
         toValue: 1,
         duration: THEME.animation.buttonFadeInMs,
-        useNativeDriver: true,
+        useNativeDriver: nativeDriver,
       }).start();
     }, delay);
     return () => clearTimeout(timer);
   }, []);
 
   const handlePress = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    if (Platform.OS !== 'web') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     Animated.sequence([
-      Animated.timing(scale, { toValue: 0.96, duration: 80, useNativeDriver: true }),
-      Animated.timing(scale, { toValue: 1, duration: 80, useNativeDriver: true }),
+      Animated.timing(scale, { toValue: 0.96, duration: 80, useNativeDriver: nativeDriver }),
+      Animated.timing(scale, { toValue: 1, duration: 80, useNativeDriver: nativeDriver }),
     ]).start();
     onPress(choice.id);
   };

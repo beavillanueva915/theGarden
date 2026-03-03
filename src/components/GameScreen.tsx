@@ -3,10 +3,13 @@ import {
   SafeAreaView,
   View,
   Text,
+  Platform,
   Pressable,
   StyleSheet,
   Animated,
 } from 'react-native';
+
+const nativeDriver = Platform.OS !== 'web';
 import { GameState, INITIAL_GAME_STATE } from '../game/gameState';
 import { STORY_NODES } from '../game/story';
 import {
@@ -101,7 +104,7 @@ export default function GameScreen() {
       Animated.timing(replayOpacity, {
         toValue: 1,
         duration: 1500,
-        useNativeDriver: true,
+        useNativeDriver: nativeDriver,
       }).start();
     }, 3000);
     return () => clearTimeout(timer);
