@@ -4,8 +4,8 @@ export const STORY_NODES: Record<string, StoryNode> = {
 
   // ================================================
   // PHASE 1: ARRIVAL
-  // Player wakes in an unfamiliar garden.
-  // No stakes. Just atmosphere.
+  // Player wakes in an unfamiliar garden, holding tea.
+  // The light is amber — a sun on its way out.
   // ================================================
 
   arrival_01: {
@@ -14,7 +14,11 @@ export const STORY_NODES: Record<string, StoryNode> = {
     lines: [
       'you open your eyes.',
       '',
-      'light. soft, warm, the color of late afternoon.',
+      'your hands are warm.',
+      'you are holding a cup of tea.',
+      '',
+      'the light is low. amber.',
+      'the color of a sun on its way out.',
       '',
       'you are sitting in a garden.',
     ],
@@ -29,9 +33,9 @@ export const STORY_NODES: Record<string, StoryNode> = {
     phase: 'arrival',
     lines: [
       'the garden is small.',
-      'stone paths. overgrown hedges. a bench weathered soft by years.',
+      'stone paths. soft hedges. a bench weathered warm by years.',
       '',
-      'everything here has been tended to by someone who loved it.',
+      'everything here has been tended to.',
     ],
     choiceDelay: 1000,
     choices: [
@@ -48,11 +52,12 @@ export const STORY_NODES: Record<string, StoryNode> = {
       'lavender, maybe. or rosemary.',
       '',
       'you cannot remember how you got here.',
-      'but you are not afraid.',
+      "but it's peaceful.",
     ],
     choiceDelay: 1000,
     choices: [
-      { id: 'stand', label: 'stand up', leadsTo: 'discovery_01', weight: 'primary' },
+      { id: 'rest', label: 'rest', leadsTo: 'arrival_rest', weight: 'secondary', setsFlags: { satOnBench: true } },
+      { id: 'explore', label: 'explore', leadsTo: 'arrival_explore', weight: 'primary' },
     ],
   },
 
@@ -61,23 +66,50 @@ export const STORY_NODES: Record<string, StoryNode> = {
     phase: 'arrival',
     lines: [
       'birds, somewhere in the hedge.',
-      'not singing — just talking to each other.',
+      'chirping softly, like a melody.',
       '',
       'you sit with this for a moment.',
       '',
       'you cannot remember how you got here.',
-      'but you are not afraid.',
+      "but it's peaceful.",
     ],
     choiceDelay: 1000,
     choices: [
-      { id: 'stand_b', label: 'stand up', leadsTo: 'discovery_01', weight: 'primary' },
+      { id: 'rest_b', label: 'rest', leadsTo: 'arrival_rest', weight: 'secondary', setsFlags: { satOnBench: true } },
+      { id: 'explore_b', label: 'explore', leadsTo: 'arrival_explore', weight: 'primary' },
+    ],
+  },
+
+  arrival_rest: {
+    id: 'arrival_rest',
+    phase: 'arrival',
+    lines: [
+      'you bring the cup to your lips.',
+      'the tea is still warm.',
+    ],
+    choiceDelay: 1000,
+    choices: [
+      { id: 'explore_after_rest', label: 'explore', leadsTo: 'arrival_explore', weight: 'primary' },
+    ],
+  },
+
+  arrival_explore: {
+    id: 'arrival_explore',
+    phase: 'arrival',
+    lines: [
+      'you set the cup on the bench.',
+      'you stand.',
+    ],
+    choiceDelay: 800,
+    choices: [
+      { id: 'walk', label: 'walk', leadsTo: 'discovery_01', weight: 'primary' },
     ],
   },
 
   // ================================================
   // PHASE 2: DISCOVERY
-  // Player explores. Small details emerge.
-  // Theme: noticing the world. Being present.
+  // A hub. Four directions. The player explores.
+  // The greenhouse is the way forward.
   // ================================================
 
   discovery_01: {
@@ -86,13 +118,58 @@ export const STORY_NODES: Record<string, StoryNode> = {
     lines: [
       'you walk along the stone path.',
       '',
+      'a stone sundial stands near the center of the garden.',
       'to your left: a cluster of wildflowers, purple and yellow.',
-      'to your right: a small greenhouse, its glass fogged.',
+      'to your right: a small greenhouse, its glass fogged with warmth.',
+      'further along: the path curves toward a low stone wall.',
     ],
     choiceDelay: 800,
     choices: [
-      { id: 'flowers', label: 'look at the flowers', leadsTo: 'discovery_flowers', weight: 'primary', setsFlags: { noticedFlowers: true } },
-      { id: 'greenhouse', label: 'go to the greenhouse', leadsTo: 'discovery_greenhouse', weight: 'secondary' },
+      {
+        id: 'sundial',
+        label: 'look at the sundial',
+        leadsTo: 'discovery_sundial',
+        weight: 'secondary',
+        setsFlags: { noticedSundial: true },
+        hideIfFlags: { noticedSundial: true },
+      },
+      {
+        id: 'flowers',
+        label: 'look at the flowers',
+        leadsTo: 'discovery_flowers',
+        weight: 'secondary',
+        setsFlags: { noticedFlowers: true },
+        hideIfFlags: { noticedFlowers: true },
+      },
+      {
+        id: 'path',
+        label: 'follow the path',
+        leadsTo: 'discovery_path',
+        weight: 'secondary',
+        setsFlags: { followedPath: true },
+        hideIfFlags: { followedPath: true },
+      },
+      {
+        id: 'greenhouse',
+        label: 'go to the greenhouse',
+        leadsTo: 'discovery_greenhouse',
+        weight: 'primary',
+      },
+    ],
+  },
+
+  discovery_sundial: {
+    id: 'discovery_sundial',
+    phase: 'discovery',
+    lines: [
+      'a stone sundial stands in a small clearing.',
+      '',
+      'the shadow falls just past the hour.',
+      'you are not sure which one.',
+    ],
+    choiceDelay: 1000,
+    choices: [
+      { id: 'back_from_sundial', label: 'head back', leadsTo: 'discovery_01', weight: 'secondary' },
     ],
   },
 
@@ -112,7 +189,25 @@ export const STORY_NODES: Record<string, StoryNode> = {
     ],
     choiceDelay: 1200,
     choices: [
-      { id: 'greenhouse_after_flowers', label: 'go to the greenhouse', leadsTo: 'discovery_greenhouse', weight: 'primary' },
+      { id: 'back_from_flowers', label: 'head back', leadsTo: 'discovery_01', weight: 'secondary' },
+    ],
+  },
+
+  discovery_path: {
+    id: 'discovery_path',
+    phase: 'discovery',
+    lines: [
+      'the path curves toward a low stone wall.',
+      '',
+      'beyond it: more garden.',
+      'or the suggestion of more garden.',
+      'it is hard to tell where it ends.',
+      '',
+      'you decide not to find out.',
+    ],
+    choiceDelay: 1200,
+    choices: [
+      { id: 'back_from_path', label: 'head back', leadsTo: 'discovery_01', weight: 'secondary' },
     ],
   },
 
@@ -146,8 +241,6 @@ export const STORY_NODES: Record<string, StoryNode> = {
       'you water it.',
       '',
       'the soil darkens.',
-      'the plant does not change — not yet.',
-      'but it will.',
     ],
     choiceDelay: 1000,
     choices: [
@@ -191,7 +284,7 @@ export const STORY_NODES: Record<string, StoryNode> = {
   // ================================================
   // PHASE 3: MEMORY
   // A box with objects from a relationship.
-  // Theme: the specific details of love.
+  // The details carry the story. Nothing is explained.
   // ================================================
 
   memory_01: {
@@ -203,8 +296,6 @@ export const STORY_NODES: Record<string, StoryNode> = {
       'a photograph.',
       'two letters.',
       'a small, smooth stone.',
-      '',
-      'you know all of these things.',
     ],
     choiceDelay: 800,
     choices: [
@@ -218,7 +309,7 @@ export const STORY_NODES: Record<string, StoryNode> = {
     id: 'memory_photo',
     phase: 'memory',
     lines: [
-      'you and someone.',
+      'you and someone vaguely familiar.',
       '',
       'neither of you are looking at the camera.',
       'you are laughing at something.',
@@ -237,14 +328,12 @@ export const STORY_NODES: Record<string, StoryNode> = {
     id: 'memory_stone',
     phase: 'memory',
     lines: [
-      'it fits perfectly in your palm.',
+      'it is small. smooth. the color of sea glass in shade.',
+      'a faint line runs through the middle.',
       '',
       'you found this on a beach.',
-      'you gave it to them.',
-      'they gave it back.',
-      '"so you remember," they said.',
       '',
-      'you still do.',
+      'you remember giving it to someone.',
     ],
     choiceDelay: 1200,
     choices: [
@@ -258,14 +347,13 @@ export const STORY_NODES: Record<string, StoryNode> = {
     lines: [
       'the letter is short.',
       '',
-      '"i keep meaning to tell you something.',
-      'then the day happens and i forget.',
-      'then the week happens.',
+      '"do you remember the day you found the grey stone?',
+      'you found it along the beach.',
       '',
-      'i am not sure what i am waiting for."',
+      '"i\'m excited to go back."',
       '',
-      'the letter is unfinished.',
-      'unsigned.',
+      'the paper is soft with age.',
+      'you set it carefully back in the box.',
     ],
     choiceDelay: 1500,
     choices: [
@@ -277,16 +365,15 @@ export const STORY_NODES: Record<string, StoryNode> = {
     id: 'memory_letter_02',
     phase: 'memory',
     lines: [
-      'this one is older.',
+      '"do you remember the garden in march?',
       '',
-      '"thank you for being there.',
-      'you probably do not know how much it mattered.',
-      'i should have said it then.',
+      'you planted something.',
+      'said it was for me.',
       '',
-      'maybe i will say it next time."',
+      'i still have not figured out what kind of flower it will be.',
+      'i am looking forward to finding out."',
       '',
-      'there is no envelope.',
-      'this letter was never sent.',
+      'you fold it gently and set it back.',
     ],
     choiceDelay: 1500,
     choices: [
@@ -296,9 +383,8 @@ export const STORY_NODES: Record<string, StoryNode> = {
 
   // ================================================
   // PHASE 4: REALIZATION
-  // The player understands what this place is.
-  // Auto-advancing — no choices, just witnessing.
-  // Theme: the right moment is now.
+  // Something is coming back. Slowly.
+  // Auto-advancing — witnessing.
   // ================================================
 
   realization_01: {
@@ -307,11 +393,11 @@ export const STORY_NODES: Record<string, StoryNode> = {
     lines: [
       'you sit on the bench.',
       '',
-      'the light has not changed since you arrived.',
-      'it is still warm. still that color.',
+      'the light is lower now than when you arrived.',
+      'still warm. but changing.',
       '',
-      'you think about time.',
-      'how much of it you spend waiting for the right moment.',
+      'something is coming back to you.',
+      'slowly.',
     ],
     choiceDelay: 1200,
     choices: [],
@@ -323,7 +409,7 @@ export const STORY_NODES: Record<string, StoryNode> = {
     phase: 'realization',
     lines: [
       'the bee from the garden comes inside somehow.',
-      'it lands on the plant you watered.',
+      'it lands on the plant.',
       '',
       'it does not stay long.',
     ],
@@ -341,9 +427,6 @@ export const STORY_NODES: Record<string, StoryNode> = {
       'they were looking at you.',
       'you did not notice, in that moment.',
       'you were too busy laughing.',
-      '',
-      'that is okay.',
-      'that is what the moment was for.',
     ],
     choiceDelay: 1500,
     choices: [
@@ -355,129 +438,232 @@ export const STORY_NODES: Record<string, StoryNode> = {
     id: 'realization_04',
     phase: 'realization',
     lines: [
-      'this garden is not real.',
+      'the photograph is still in your hand.',
       '',
-      'or rather: it is real the way all important places are real.',
-      'a space between.',
+      'they were looking at you.',
       '',
-      'you came here because you needed to remember something.',
+      'you sit for a while longer.',
       '',
-      'you remember it now.',
+      'somewhere, the path is still there.',
     ],
     choiceDelay: 1200,
+    choices: [],
+    autoAdvanceTo: 'garden_return',
+  },
+
+  // ================================================
+  // GARDEN RETURN
+  // The sun is nearly gone. Two choices.
+  // ================================================
+
+  garden_return: {
+    id: 'garden_return',
+    phase: 'realization',
+    lines: [
+      'the garden is quiet.',
+      '',
+      'the cup is on the bench where you left it.',
+      'the sun has nearly finished.',
+    ],
+    choiceDelay: 1500,
     choices: [
-      { id: 'go_back', label: 'go back', leadsTo: 'connection_01', weight: 'primary' },
+      {
+        id: 'go_back_to_path',
+        label: 'go back to the path',
+        leadsTo: 'ocean_01',
+        weight: 'primary',
+        requiresFlags: { followedPath: true },
+      },
+      {
+        id: 'return_to_bench',
+        label: 'return to the bench',
+        leadsTo: 'bench_final',
+        weight: 'secondary',
+      },
     ],
   },
 
   // ================================================
-  // PHASE 5: CONNECTION
-  // Player is given the choice to reach out.
-  // The final action is saying "I love you."
-  // Warm, earned, not saccharine.
+  // PHASE 5: RETURN — THE OCEAN ENDING
+  // The true ending. Finding someone waiting.
   // ================================================
 
-  connection_01: {
-    id: 'connection_01',
-    phase: 'connection',
+  ocean_01: {
+    id: 'ocean_01',
+    phase: 'return',
     lines: [
-      'you are back.',
+      'the path looks the same.',
       '',
-      'wherever back is.',
+      'but this time you notice something.',
       '',
-      'your phone is in your pocket.',
+      'a crack in the stone wall.',
+      'narrow. just wide enough.',
     ],
     choiceDelay: 1200,
     choices: [
-      { id: 'pick_up_phone', label: 'pick it up', leadsTo: 'connection_02', weight: 'primary' },
+      { id: 'go_through', label: 'go through', leadsTo: 'ocean_02', weight: 'primary' },
     ],
   },
 
-  connection_02: {
-    id: 'connection_02',
-    phase: 'connection',
+  ocean_02: {
+    id: 'ocean_02',
+    phase: 'return',
     lines: [
-      'there is someone you have been meaning to talk to.',
+      'the air changes.',
       '',
-      'not for any reason.',
-      'just — you think about them sometimes.',
-      'you wonder if they know.',
+      'salt. wind.',
+      '',
+      'you are standing near the edge of a cliff.',
+      '',
+      'below: the ocean.',
+      'quiet. flat. the color of the sky just after the sun has gone.',
+    ],
+    choiceDelay: 1500,
+    choices: [],
+    autoAdvanceTo: 'ocean_03',
+  },
+
+  ocean_03: {
+    id: 'ocean_03',
+    phase: 'return',
+    lines: [
+      'there is someone sitting in a chair by an old tree.',
+      '',
+      'facing the water.',
+      'a familiar shape.',
+      '',
+      'you have been here before, you think.',
+      'or somewhere very much like here.',
+    ],
+    choiceDelay: 1200,
+    choices: [],
+    autoAdvanceTo: 'ocean_04',
+  },
+
+  ocean_04: {
+    id: 'ocean_04',
+    phase: 'return',
+    lines: [
+      'you walk toward them.',
+      '',
+      'the grass is soft underfoot.',
+      'the sun is almost gone.',
     ],
     choiceDelay: 1200,
     choices: [
-      { id: 'message', label: 'send them a message', leadsTo: 'connection_03', weight: 'primary', setsFlags: { choseLove: true } },
-      { id: 'wait', label: 'maybe later', leadsTo: 'connection_02b', weight: 'secondary' },
+      { id: 'say_hello', label: 'say hello', leadsTo: 'ocean_05', weight: 'primary' },
     ],
   },
 
-  connection_02b: {
-    id: 'connection_02b',
-    phase: 'connection',
+  ocean_05: {
+    id: 'ocean_05',
+    phase: 'return',
     lines: [
-      'later.',
+      'they turn.',
       '',
-      'you think about the letters.',
-      '"i am not sure what i am waiting for."',
-    ],
-    choiceDelay: 1000,
-    choices: [
-      { id: 'message_b', label: 'send the message', leadsTo: 'connection_03', weight: 'primary', setsFlags: { choseLove: true } },
-    ],
-  },
-
-  connection_03: {
-    id: 'connection_03',
-    phase: 'connection',
-    lines: [
-      'you do not overthink it.',
+      '"there you are, love."',
       '',
-      'you just say:',
+      'they say it like they have been waiting.',
+      'not impatiently.',
       '',
-      '"hey. i was thinking about you.',
-      'just wanted you to know i love you."',
-      '',
-      'you press send.',
+      'just',
+      'waiting.',
     ],
     choiceDelay: 2000,
     choices: [],
-    autoAdvanceTo: 'connection_04',
+    autoAdvanceTo: 'ocean_06',
   },
 
-  connection_04: {
-    id: 'connection_04',
-    phase: 'connection',
+  ocean_06: {
+    id: 'ocean_06',
+    phase: 'return',
     lines: [
-      'they will read it.',
+      'you sit beside them.',
       '',
-      'maybe they will read it on a hard day,',
-      'and it will be exactly what they needed.',
-      '',
-      'maybe they will smile and put their phone down',
-      'and not reply for hours.',
-      '',
-      'that is okay.',
-      'it was not about the reply.',
-    ],
-    choiceDelay: 2000,
-    choices: [],
-    autoAdvanceTo: 'connection_05',
-  },
-
-  connection_05: {
-    id: 'connection_05',
-    phase: 'connection',
-    lines: [
-      'somewhere, in a small greenhouse,',
-      'a plant is leaning toward the light.',
-      '',
-      'it will be fine.',
-      '',
-      'you will be fine.',
+      'and remember.',
       '',
       '',
       '— end —',
     ],
     choiceDelay: 0,
     choices: [],
+  },
+
+  // ================================================
+  // ALTERNATIVE ENDING — THE BENCH
+  // ================================================
+
+  bench_final: {
+    id: 'bench_final',
+    phase: 'return',
+    lines: [
+      '',
+      '— end —',
+    ],
+    choiceDelay: 0,
+    choices: [],
+  },
+
+  // ================================================
+  // REVISIT NODES (accessed via map during memory+)
+  // ================================================
+
+  revisit_sundial: {
+    id: 'revisit_sundial',
+    phase: 'discovery',
+    lines: [
+      "the sundial hasn't moved.",
+      '',
+      'the shadow is longer now.',
+    ],
+    choiceDelay: 1000,
+    choices: [
+      { id: 'back_from_revisit_sundial', label: 'go back', leadsTo: '', weight: 'secondary', returnsFromMap: true },
+    ],
+  },
+
+  revisit_path: {
+    id: 'revisit_path',
+    phase: 'discovery',
+    lines: [
+      'the path curves toward the wall.',
+      '',
+      "you notice a crack you didn't see before.",
+      'narrow. just wide enough.',
+    ],
+    choiceDelay: 1200,
+    choices: [
+      { id: 'go_through_crack', label: 'go through', leadsTo: 'ocean_01', weight: 'primary', setsFlags: { followedPath: true } },
+      { id: 'leave_it', label: 'leave it', leadsTo: '', weight: 'secondary', returnsFromMap: true },
+    ],
+  },
+
+  revisit_flowers: {
+    id: 'revisit_flowers',
+    phase: 'discovery',
+    lines: [
+      'the bee is gone.',
+      '',
+      'the flowers have not noticed.',
+    ],
+    choiceDelay: 1000,
+    choices: [
+      { id: 'back_from_revisit_flowers', label: 'go back', leadsTo: '', weight: 'secondary', returnsFromMap: true },
+    ],
+  },
+
+  revisit_greenhouse: {
+    id: 'revisit_greenhouse',
+    phase: 'discovery',
+    lines: [
+      'the watering can is where you left it.',
+      '',
+      'the plant has shifted slightly toward the window.',
+      'or you imagined it.',
+    ],
+    choiceDelay: 1000,
+    choices: [
+      { id: 'back_from_revisit_greenhouse', label: 'go back', leadsTo: '', weight: 'secondary', returnsFromMap: true },
+    ],
   },
 };

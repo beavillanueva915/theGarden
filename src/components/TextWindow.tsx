@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { ScrollView, View, Text, StyleSheet } from 'react-native';
-import { THEME } from '../theme';
+import { THEME, useTheme } from '../theme';
 
 interface TextWindowProps {
   historicalLines: string[];
@@ -77,6 +77,7 @@ function useTypewriter(
 
 export default function TextWindow({ historicalLines, currentLines, onComplete }: TextWindowProps) {
   const scrollRef = useRef<ScrollView>(null);
+  const { colors } = useTheme();
 
   const revealedLines = useTypewriter(
     currentLines,
@@ -100,7 +101,7 @@ export default function TextWindow({ historicalLines, currentLines, onComplete }
         line === '' ? (
           <View key={`h-gap-${i}`} style={styles.gap} />
         ) : (
-          <Text key={`h-${i}`} style={[styles.text, styles.historical]}>
+          <Text key={`h-${i}`} style={[styles.text, { color: colors.historical }]}>
             {line}
           </Text>
         ),
@@ -114,7 +115,7 @@ export default function TextWindow({ historicalLines, currentLines, onComplete }
         line === '' ? (
           <View key={`r-gap-${i}`} style={styles.gap} />
         ) : (
-          <Text key={`r-${i}`} style={styles.text}>
+          <Text key={`r-${i}`} style={[styles.text, { color: colors.textPrimary }]}>
             {line}
           </Text>
         ),
@@ -136,11 +137,7 @@ const styles = StyleSheet.create({
     fontFamily: THEME.typography.fontFamily,
     fontSize: THEME.typography.fontSize.narrative,
     lineHeight: THEME.typography.lineHeight.narrative,
-    color: THEME.colors.textPrimary,
     marginBottom: THEME.spacing.paragraphGap,
-  },
-  historical: {
-    color: THEME.colors.historical,
   },
   gap: {
     height: 14,

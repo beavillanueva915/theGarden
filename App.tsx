@@ -2,20 +2,28 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import GameScreen from './src/components/GameScreen';
-import { THEME } from './src/theme';
+import { ThemeProvider, useTheme } from './src/theme';
 
-export default function App() {
+function Root() {
+  const { colors } = useTheme();
   return (
-    <View style={styles.root}>
+    <View style={[styles.root, { backgroundColor: colors.background }]}>
       <StatusBar style="light" />
       <GameScreen />
     </View>
   );
 }
 
+export default function App() {
+  return (
+    <ThemeProvider>
+      <Root />
+    </ThemeProvider>
+  );
+}
+
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: THEME.colors.background,
   },
 });

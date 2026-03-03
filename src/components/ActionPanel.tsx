@@ -1,21 +1,39 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Choice } from '../game/gameState';
+import { Choice, GameFlags, FlagKey } from '../game/gameState';
 import ActionButton from './ActionButton';
 import { THEME } from '../theme';
 
 interface ActionPanelProps {
   choices: Choice[];
+  flags: GameFlags;
   isTyping: boolean;
   onChoiceSelected: (choiceId: string) => void;
 }
 
-export default function ActionPanel({ choices, isTyping, onChoiceSelected }: ActionPanelProps) {
-  if (isTyping || choices.length === 0) return null;
+function isChoiceVisible(choice: Choice, flags: GameFlags): boolean {
+  if (choice.hideIfFlags) {
+    const hidden = Object.entries(choice.hideIfFlags).some(
+      ([key, val]) => flags[key as FlagKey] === val,
+    );
+    if (hidden) return false;
+  }
+  if (choice.requiresFlags) {
+    const satisfied = Object.entries(choice.requiresFlags).every(
+      ([key, val]) => flags[key as FlagKey] === val,
+    );
+    if (!satisfied) return false;
+  }
+  return true;
+}
+
+export default function ActionPanel({ choices, flags, isTyping, onChoiceSelected }: ActionPanelProps) {
+  const visible = choices.filter((c) => isChoiceVisible(c, flags));
+  if (isTyping || visible.length === 0) return null;
 
   return (
     <View style={styles.panel}>
-      {choices.map((choice, i) => (
+      {visible.map((choice, i) => (
         <ActionButton
           key={choice.id}
           choice={choice}

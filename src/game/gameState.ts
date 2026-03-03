@@ -3,7 +3,7 @@ export type Phase =
   | 'discovery'
   | 'memory'
   | 'realization'
-  | 'connection';
+  | 'return';
 
 export type FlagKey =
   | 'noticedFlowers'
@@ -14,7 +14,10 @@ export type FlagKey =
   | 'pickedUpPhoto'
   | 'heldStone'
   | 'rememberedMoment'
-  | 'choseLove';
+  | 'choseLove'
+  | 'satOnBench'
+  | 'followedPath'
+  | 'noticedSundial';
 
 export type GameFlags = Record<FlagKey, boolean>;
 
@@ -28,14 +31,20 @@ export const DEFAULT_FLAGS: GameFlags = {
   heldStone: false,
   rememberedMoment: false,
   choseLove: false,
+  satOnBench: false,
+  followedPath: false,
+  noticedSundial: false,
 };
 
 export interface Choice {
   id: string;
   label: string;
-  leadsTo: string;
+  leadsTo: string | ((flags: GameFlags) => string);
   setsFlags?: Partial<GameFlags>;
   weight?: 'primary' | 'secondary';
+  requiresFlags?: Partial<GameFlags>;
+  hideIfFlags?: Partial<GameFlags>;
+  returnsFromMap?: boolean;
 }
 
 export interface StoryNode {
@@ -44,7 +53,7 @@ export interface StoryNode {
   lines: string[];
   choices: Choice[];
   choiceDelay?: number;
-  autoAdvanceTo?: string;
+  autoAdvanceTo?: string | ((flags: GameFlags) => string);
 }
 
 export interface GameState {
@@ -54,6 +63,7 @@ export interface GameState {
   textLog: string[];
   isTyping: boolean;
   isComplete: boolean;
+  returnToNodeId: string | null;
 }
 
 export const INITIAL_GAME_STATE: GameState = {
@@ -63,4 +73,5 @@ export const INITIAL_GAME_STATE: GameState = {
   textLog: [],
   isTyping: true,
   isComplete: false,
+  returnToNodeId: null,
 };
