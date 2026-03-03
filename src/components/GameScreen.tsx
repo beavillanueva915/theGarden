@@ -9,15 +9,25 @@ import {
 } from 'react-native';
 import { GameState, INITIAL_GAME_STATE } from '../game/gameState';
 import { STORY_NODES } from '../game/story';
-import { applyChoice, autoAdvance, finishTyping, resetGame } from '../game/engine';
+import {
+  applyChoice,
+  autoAdvance,
+  finishTyping,
+  navigateToMapNode,
+  returnFromMap,
+  resetGame,
+} from '../game/engine';
 import TextWindow from './TextWindow';
 import ActionPanel from './ActionPanel';
-import { THEME } from '../theme';
+import MapPanel from './MapPanel';
+import { THEME, useTheme } from '../theme';
 
 type GameAction =
   | { type: 'CHOICE_SELECTED'; choiceId: string }
   | { type: 'TYPING_COMPLETE' }
   | { type: 'AUTO_ADVANCE' }
+  | { type: 'MAP_NAVIGATE'; nodeId: string }
+  | { type: 'RETURN_FROM_MAP' }
   | { type: 'RESET' };
 
 function gameReducer(state: GameState, action: GameAction): GameState {
@@ -28,6 +38,10 @@ function gameReducer(state: GameState, action: GameAction): GameState {
       return finishTyping(state);
     case 'AUTO_ADVANCE':
       return autoAdvance(state);
+    case 'MAP_NAVIGATE':
+      return navigateToMapNode(state, action.nodeId);
+    case 'RETURN_FROM_MAP':
+      return returnFromMap(state);
     case 'RESET':
       return resetGame();
     default:
@@ -35,10 +49,14 @@ function gameReducer(state: GameState, action: GameAction): GameState {
   }
 }
 
+const SHOW_MENU_PHASES = ['discovery', 'memory', 'realization', 'return'];
+
 export default function GameScreen() {
   const [state, dispatch] = useReducer(gameReducer, INITIAL_GAME_STATE);
   const [showReplay, setShowReplay] = useState(false);
+  const [showPanel, setShowPanel] = useState(false);
   const replayOpacity = React.useRef(new Animated.Value(0)).current;
+  const { colors } = useTheme();
 
   const currentNode = STORY_NODES[state.currentNodeId];
 
@@ -46,8 +64,21 @@ export default function GameScreen() {
     dispatch({ type: 'TYPING_COMPLETE' });
   }, []);
 
-  const handleChoiceSelected = useCallback((choiceId: string) => {
-    dispatch({ type: 'CHOICE_SELECTED', choiceId });
+  const handleChoiceSelected = useCallback(
+    (choiceId: string) => {
+      const node = STORY_NODES[state.currentNodeId];
+      const choice = node?.choices.find((c) => c.id === choiceId);
+      if (choice?.returnsFromMap) {
+        dispatch({ type: 'RETURN_FROM_MAP' });
+      } else {
+        dispatch({ type: 'CHOICE_SELECTED', choiceId });
+      }
+    },
+    [state.currentNodeId],
+  );
+
+  const handleMapNavigate = useCallback((nodeId: string) => {
+    dispatch({ type: 'MAP_NAVIGATE', nodeId });
   }, []);
 
   // Schedule auto-advance after typing completes
@@ -78,12 +109,15 @@ export default function GameScreen() {
 
   const handleReplay = () => {
     setShowReplay(false);
+    setShowPanel(false);
     replayOpacity.setValue(0);
     dispatch({ type: 'RESET' });
   };
 
+  const showMenuButton = SHOW_MENU_PHASES.includes(state.phase);
+
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <TextWindow
         key={state.currentNodeId}
         historicalLines={state.textLog}
@@ -93,14 +127,35 @@ export default function GameScreen() {
 
       <ActionPanel
         choices={currentNode?.choices ?? []}
+        flags={state.flags}
         isTyping={state.isTyping}
         onChoiceSelected={handleChoiceSelected}
       />
 
+      {showMenuButton && !showPanel && (
+        <Pressable
+          style={styles.menuButton}
+          onPress={() => setShowPanel(true)}
+        >
+          <Text style={[styles.menuText, { color: colors.textSecondary }]}>···</Text>
+        </Pressable>
+      )}
+
+      {showPanel && (
+        <MapPanel
+          flags={state.flags}
+          phase={state.phase}
+          onNavigate={handleMapNavigate}
+          onClose={() => setShowPanel(false)}
+        />
+      )}
+
       {showReplay && (
         <Animated.View style={[styles.replayContainer, { opacity: replayOpacity }]}>
           <Pressable onPress={handleReplay}>
-            <Text style={styles.replayText}>again?</Text>
+            <Text style={[styles.replayText, { color: colors.textSecondary }]}>
+              return to the bench
+            </Text>
           </Pressable>
         </Animated.View>
       )}
@@ -111,7 +166,18 @@ export default function GameScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: THEME.colors.background,
+  },
+  menuButton: {
+    position: 'absolute',
+    top: 50,
+    right: THEME.spacing.screenPadding,
+    padding: 8,
+    zIndex: 10,
+  },
+  menuText: {
+    fontFamily: THEME.typography.fontFamily,
+    fontSize: 18,
+    letterSpacing: 3,
   },
   replayContainer: {
     alignItems: 'center',
@@ -120,7 +186,6 @@ const styles = StyleSheet.create({
   replayText: {
     fontFamily: THEME.typography.fontFamily,
     fontSize: THEME.typography.fontSize.choice,
-    color: THEME.colors.textSecondary,
     letterSpacing: 1,
   },
 });

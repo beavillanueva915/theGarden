@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { Animated, Pressable, Text, StyleSheet } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { Choice } from '../game/gameState';
-import { THEME } from '../theme';
+import { THEME, useTheme } from '../theme';
 
 interface ActionButtonProps {
   choice: Choice;
@@ -13,6 +13,7 @@ interface ActionButtonProps {
 export default function ActionButton({ choice, index, onPress }: ActionButtonProps) {
   const opacity = useRef(new Animated.Value(0)).current;
   const scale = useRef(new Animated.Value(1)).current;
+  const { colors } = useTheme();
 
   useEffect(() => {
     const delay = index * THEME.animation.buttonStaggerMs;
@@ -40,10 +41,18 @@ export default function ActionButton({ choice, index, onPress }: ActionButtonPro
   return (
     <Animated.View style={{ opacity, transform: [{ scale }] }}>
       <Pressable
-        style={[styles.button, isPrimary ? styles.primary : styles.secondary]}
+        style={[
+          styles.button,
+          { borderColor: isPrimary ? colors.accent : colors.choiceBorder },
+        ]}
         onPress={handlePress}
       >
-        <Text style={[styles.label, isPrimary ? styles.labelPrimary : styles.labelSecondary]}>
+        <Text
+          style={[
+            styles.label,
+            { color: isPrimary ? colors.accent : colors.textSecondary },
+          ]}
+        >
           {choice.label}
         </Text>
       </Pressable>
@@ -58,23 +67,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 4,
     marginBottom: THEME.spacing.choiceGap,
-  },
-  primary: {
-    borderColor: THEME.colors.accent,
-    backgroundColor: 'transparent',
-  },
-  secondary: {
-    borderColor: THEME.colors.choiceBorder,
     backgroundColor: 'transparent',
   },
   label: {
     fontFamily: THEME.typography.fontFamily,
     fontSize: THEME.typography.fontSize.choice,
-  },
-  labelPrimary: {
-    color: THEME.colors.accent,
-  },
-  labelSecondary: {
-    color: THEME.colors.textSecondary,
   },
 });
