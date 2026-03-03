@@ -2,6 +2,13 @@ import React, { createContext, useContext, useState } from 'react';
 
 export type ThemeKey = 'evening-blue' | 'clean-dark' | 'soft-slate';
 
+export type SpeedKey = 'slow' | 'normal' | 'fast';
+export const SPEEDS: Record<SpeedKey, { charDelay: number; pauseDelay: number }> = {
+  slow:   { charDelay: 60,  pauseDelay: 600 },
+  normal: { charDelay: 35,  pauseDelay: 420 },
+  fast:   { charDelay: 15,  pauseDelay: 250 },
+};
+
 type ColorScheme = {
   background: string;
   surface: string;
@@ -82,19 +89,24 @@ type ThemeContextValue = {
   colors: ColorScheme;
   themeKey: ThemeKey;
   setThemeKey: (key: ThemeKey) => void;
+  speedKey: SpeedKey;
+  setSpeedKey: (k: SpeedKey) => void;
 };
 
 const ThemeContext = createContext<ThemeContextValue>({
   colors: COLORS['evening-blue'],
   themeKey: 'evening-blue',
   setThemeKey: () => {},
+  speedKey: 'normal',
+  setSpeedKey: () => {},
 });
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [themeKey, setThemeKey] = useState<ThemeKey>('evening-blue');
+  const [speedKey, setSpeedKey] = useState<SpeedKey>('normal');
   return React.createElement(
     ThemeContext.Provider,
-    { value: { colors: COLORS[themeKey], themeKey, setThemeKey } },
+    { value: { colors: COLORS[themeKey], themeKey, setThemeKey, speedKey, setSpeedKey } },
     children,
   );
 }

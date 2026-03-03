@@ -169,7 +169,7 @@ export const STORY_NODES: Record<string, StoryNode> = {
     ],
     choiceDelay: 1000,
     choices: [
-      { id: 'back_from_sundial', label: 'head back', leadsTo: 'discovery_01', weight: 'secondary' },
+      { id: 'back_from_sundial', label: 'head back', leadsTo: 'discovery_return', weight: 'secondary' },
     ],
   },
 
@@ -183,13 +183,12 @@ export const STORY_NODES: Record<string, StoryNode> = {
       'the kind that grow where nobody planned.',
       '',
       'you notice a bee moving between them.',
-      'it does not notice you.',
       '',
       'you watch it for longer than you expected to.',
     ],
     choiceDelay: 1200,
     choices: [
-      { id: 'back_from_flowers', label: 'head back', leadsTo: 'discovery_01', weight: 'secondary' },
+      { id: 'back_from_flowers', label: 'head back', leadsTo: 'discovery_return', weight: 'secondary' },
     ],
   },
 
@@ -207,7 +206,19 @@ export const STORY_NODES: Record<string, StoryNode> = {
     ],
     choiceDelay: 1200,
     choices: [
-      { id: 'back_from_path', label: 'head back', leadsTo: 'discovery_01', weight: 'secondary' },
+      { id: 'back_from_path', label: 'head back', leadsTo: 'discovery_return', weight: 'secondary' },
+    ],
+  },
+
+  discovery_return: {
+    id: 'discovery_return',
+    phase: 'discovery',
+    lines: [],
+    choices: [
+      { id: 'sundial_r',    label: 'look at the sundial',  leadsTo: 'discovery_sundial',    weight: 'secondary', setsFlags: { noticedSundial: true }, hideIfFlags: { noticedSundial: true } },
+      { id: 'flowers_r',    label: 'look at the flowers',  leadsTo: 'discovery_flowers',    weight: 'secondary', setsFlags: { noticedFlowers: true }, hideIfFlags: { noticedFlowers: true } },
+      { id: 'path_r',       label: 'follow the path',      leadsTo: 'discovery_path',       weight: 'secondary', setsFlags: { followedPath: true },   hideIfFlags: { followedPath: true } },
+      { id: 'greenhouse_r', label: 'go to the greenhouse', leadsTo: 'discovery_greenhouse', weight: 'primary' },
     ],
   },
 
@@ -299,9 +310,10 @@ export const STORY_NODES: Record<string, StoryNode> = {
     ],
     choiceDelay: 800,
     choices: [
-      { id: 'photo', label: 'look at the photograph', leadsTo: 'memory_photo', weight: 'primary', setsFlags: { pickedUpPhoto: true } },
-      { id: 'letters', label: 'read a letter', leadsTo: 'memory_letter_01', weight: 'secondary', setsFlags: { readFirstLetter: true } },
-      { id: 'stone', label: 'hold the stone', leadsTo: 'memory_stone', weight: 'secondary', setsFlags: { heldStone: true } },
+      { id: 'photo',   label: 'look at the photograph',       leadsTo: 'memory_photo',     weight: 'primary',   setsFlags: { pickedUpPhoto: true },   hideIfFlags: { pickedUpPhoto: true } },
+      { id: 'letters', label: 'read a letter',                 leadsTo: 'memory_letter_01', weight: 'secondary', setsFlags: { readFirstLetter: true }, hideIfFlags: { readFirstLetter: true } },
+      { id: 'stone',   label: 'hold the stone',                leadsTo: 'memory_stone',     weight: 'secondary', setsFlags: { heldStone: true },       hideIfFlags: { heldStone: true } },
+      { id: 'sit',     label: 'look at the photograph again', leadsTo: 'realization_01',   weight: 'primary',   requiresFlags: { pickedUpPhoto: true, heldStone: true, readSecondLetter: true } },
     ],
   },
 
@@ -313,14 +325,13 @@ export const STORY_NODES: Record<string, StoryNode> = {
       '',
       'neither of you are looking at the camera.',
       'you are laughing at something.',
-      'they are looking at you.',
       '',
       'you cannot remember who took this picture.',
       'you can remember exactly how that day felt.',
     ],
     choiceDelay: 1200,
     choices: [
-      { id: 'read_letter_after_photo', label: 'read a letter', leadsTo: 'memory_letter_01', weight: 'primary', setsFlags: { readFirstLetter: true } },
+      { id: 'set_photo_down', label: 'set it down', leadsTo: 'memory_01', weight: 'secondary' },
     ],
   },
 
@@ -337,7 +348,7 @@ export const STORY_NODES: Record<string, StoryNode> = {
     ],
     choiceDelay: 1200,
     choices: [
-      { id: 'read_letter_after_stone', label: 'read a letter', leadsTo: 'memory_letter_01', weight: 'primary', setsFlags: { readFirstLetter: true } },
+      { id: 'set_stone_down', label: 'set it down', leadsTo: 'memory_01', weight: 'secondary' },
     ],
   },
 
@@ -345,8 +356,6 @@ export const STORY_NODES: Record<string, StoryNode> = {
     id: 'memory_letter_01',
     phase: 'memory',
     lines: [
-      'the letter is short.',
-      '',
       '"do you remember the day you found the grey stone?',
       'you found it along the beach.',
       '',
@@ -373,11 +382,11 @@ export const STORY_NODES: Record<string, StoryNode> = {
       'i still have not figured out what kind of flower it will be.',
       'i am looking forward to finding out."',
       '',
-      'you fold it gently and set it back.',
+      'you fold it gently.',
     ],
     choiceDelay: 1500,
     choices: [
-      { id: 'sit_with_it', label: 'sit with this', leadsTo: 'realization_01', weight: 'primary' },
+      { id: 'set_letter_back', label: 'set it back', leadsTo: 'memory_01', weight: 'secondary' },
     ],
   },
 
@@ -391,60 +400,27 @@ export const STORY_NODES: Record<string, StoryNode> = {
     id: 'realization_01',
     phase: 'realization',
     lines: [
-      'you sit on the bench.',
+      'you look at the photograph again.',
       '',
-      'the light is lower now than when you arrived.',
-      'still warm. but changing.',
+      'they were looking at you.',
+      'you did not notice at first.',
       '',
       'something is coming back to you.',
       'slowly.',
     ],
     choiceDelay: 1200,
-    choices: [],
-    autoAdvanceTo: 'realization_02',
+    choices: [
+      { id: 'sit_longer', label: 'sit for a while longer', leadsTo: 'realization_02', weight: 'primary' },
+      { id: 'return_garden', label: 'return to the garden', leadsTo: 'garden_return', weight: 'secondary' },
+    ],
   },
 
   realization_02: {
     id: 'realization_02',
     phase: 'realization',
     lines: [
-      'the bee from the garden comes inside somehow.',
-      'it lands on the plant.',
-      '',
-      'it does not stay long.',
-    ],
-    choiceDelay: 700,
-    choices: [],
-    autoAdvanceTo: 'realization_03',
-  },
-
-  realization_03: {
-    id: 'realization_03',
-    phase: 'realization',
-    lines: [
-      'you look at the photograph again.',
-      '',
-      'they were looking at you.',
-      'you did not notice, in that moment.',
-      'you were too busy laughing.',
-    ],
-    choiceDelay: 1500,
-    choices: [
-      { id: 'understand', label: 'look at the photograph again', leadsTo: 'realization_04', weight: 'primary' },
-    ],
-  },
-
-  realization_04: {
-    id: 'realization_04',
-    phase: 'realization',
-    lines: [
-      'the photograph is still in your hand.',
-      '',
-      'they were looking at you.',
-      '',
-      'you sit for a while longer.',
-      '',
-      'somewhere, the path is still there.',
+      'the light is lower now than when you arrived.',
+      'still warm. but changing.',
     ],
     choiceDelay: 1200,
     choices: [],
