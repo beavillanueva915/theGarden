@@ -430,7 +430,7 @@ export const STORY_NODES: Record<string, StoryNode> = {
     ],
     choiceDelay: 1500,
     choices: [
-      { id: 'understand', label: 'you understand now', leadsTo: 'realization_04', weight: 'primary' },
+      { id: 'understand', label: 'look at the photograph again', leadsTo: 'realization_04', weight: 'primary' },
     ],
   },
 
