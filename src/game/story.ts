@@ -350,7 +350,7 @@ export const STORY_NODES: Record<string, StoryNode> = {
       '"do you remember the day you found the grey stone?',
       'you found it along the beach.',
       '',
-      '"i\'m excited to go back."',
+      'i\'m excited to go back."',
       '',
       'the paper is soft with age.',
       'you set it carefully back in the box.',
