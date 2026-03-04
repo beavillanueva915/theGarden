@@ -402,7 +402,7 @@ export const STORY_NODES: Record<string, StoryNode> = {
     lines: [
       'you look at the photograph again.',
       '',
-      'they were looking at you.',
+      'the other person was looking at you.',
       'you did not notice at first.',
       '',
       'something is coming back to you.',
